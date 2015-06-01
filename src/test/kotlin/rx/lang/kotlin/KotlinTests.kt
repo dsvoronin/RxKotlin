@@ -22,10 +22,10 @@ import rx.Observable
 import org.mockito.Mock
 
 public abstract class KotlinTests {
-    [Mock] var a: ScriptAssertion = uninitialized()
-    [Mock] var w: Observable<Int> = uninitialized()
+    @Mock var a: ScriptAssertion = uninitialized()
+    @Mock var w: Observable<Int> = uninitialized()
 
-    [Before]
+    @Before
     public fun before() {
         MockitoAnnotations.initMocks(this)
     }

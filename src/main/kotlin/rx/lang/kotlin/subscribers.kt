@@ -28,7 +28,7 @@ public class FunctionSubscriber<T>() : Subscriber<T>() {
     fun onCompleted(onCompletedFunction: () -> Unit): FunctionSubscriber<T> = copy { onCompletedFunctions.add(onCompletedFunction) }
     fun onError(onErrorFunction: (t: Throwable) -> Unit): FunctionSubscriber<T> = copy { onErrorFunctions.add(onErrorFunction) }
     fun onNext(onNextFunction: (t: T) -> Unit): FunctionSubscriber<T> = copy { onNextFunctions.add(onNextFunction) }
-    fun onStart(onStartFunction : () -> Unit) : FunctionSubscriber<T> = copy { onStartFunctions.add(onStartFunction) }
+    fun onStart(onStartFunction: () -> Unit): FunctionSubscriber<T> = copy { onStartFunctions.add(onStartFunction) }
 
     private fun copy(block: FunctionSubscriber<T>.() -> Unit): FunctionSubscriber<T> {
         val newSubscriber = FunctionSubscriber<T>()
@@ -47,10 +47,21 @@ public class FunctionSubscriberModifier<T>(init: FunctionSubscriber<T> = subscri
     public var subscriber: FunctionSubscriber<T> = init
         private set
 
-    fun onCompleted(onCompletedFunction: () -> Unit) : Unit { subscriber = subscriber.onCompleted(onCompletedFunction) }
-    fun onError(onErrorFunction: (t : Throwable) -> Unit) : Unit { subscriber = subscriber.onError(onErrorFunction) }
-    fun onNext(onNextFunction: (t : T) -> Unit) : Unit { subscriber = subscriber.onNext(onNextFunction) }
-    fun onStart(onStartFunction : () -> Unit) : Unit { subscriber = subscriber.onStart(onStartFunction) }
+    fun onCompleted(onCompletedFunction: () -> Unit): Unit {
+        subscriber = subscriber.onCompleted(onCompletedFunction)
+    }
+
+    fun onError(onErrorFunction: (t: Throwable) -> Unit): Unit {
+        subscriber = subscriber.onError(onErrorFunction)
+    }
+
+    fun onNext(onNextFunction: (t: T) -> Unit): Unit {
+        subscriber = subscriber.onNext(onNextFunction)
+    }
+
+    fun onStart(onStartFunction: () -> Unit): Unit {
+        subscriber = subscriber.onStart(onStartFunction)
+    }
 }
 
 public fun <T> subscriber(): FunctionSubscriber<T> = FunctionSubscriber()
