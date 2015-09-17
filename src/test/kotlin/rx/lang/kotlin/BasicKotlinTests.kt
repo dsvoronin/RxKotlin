@@ -16,16 +16,17 @@
 
 package rx.lang.kotlin
 
-import rx.Observable
+import org.junit.Assert.assertEquals
+import org.junit.Assert.fail
 import org.junit.Test
-import org.mockito.Mockito.*
-import org.mockito.Matchers.*
-import org.junit.Assert.*
+import org.mockito.Matchers.any
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import rx.Notification
-import kotlin.concurrent.thread
-import rx.lang.kotlin.BasicKotlinTests.AsyncObservable
+import rx.Observable
 import rx.Observable.OnSubscribe
 import rx.Subscriber
+import kotlin.concurrent.thread
 
 /**
  * This class use plain Kotlin without extensions from the language adaptor
@@ -36,7 +37,7 @@ public class BasicKotlinTests : KotlinTests() {
     @Test
     public fun testCreate() {
 
-        Observable.create(object:OnSubscribe<String> {
+        Observable.create(object : OnSubscribe<String> {
             override fun call(subscriber: Subscriber<in String>) {
                 subscriber.onNext("Hello")
                 subscriber.onCompleted()
@@ -83,8 +84,8 @@ public class BasicKotlinTests : KotlinTests() {
     @Test
     public fun testMaterialize() {
         Observable.from(listOf(1, 2, 3)).materialize().subscribe(received)
-        verify(a, times(4)).received(any(javaClass<Notification<Int>>()))
-        verify(a, times(0)).error(any(javaClass<Exception>()))
+        verify(a, times(4)).received(any(Notification::class.java))
+        verify(a, times(0)).error(any(Exception::class.java))
     }
 
     @Test
@@ -105,13 +106,13 @@ public class BasicKotlinTests : KotlinTests() {
         verify(a, times(0)).received(5)
         verify(a, times(1)).received(6)
         verify(a, times(0)).received(7)
-        verify(a, times(1)).error(any(javaClass<NullPointerException>()))
+        verify(a, times(1)).error(any(NullPointerException::class.java))
     }
 
     @Test
     public fun testScriptWithMaterialize() {
         TestFactory().observable.materialize().subscribe(received)
-        verify(a, times(2)).received(any(javaClass<Notification<Int>>()))
+        verify(a, times(2)).received(any(Notification::class.java))
     }
 
     @Test
@@ -188,7 +189,7 @@ public class BasicKotlinTests : KotlinTests() {
 
     @Test
     public fun testTakeWhileWithIndex() {
-        Observable.from(listOf(1, 2, 3)).takeWhile { x -> x < 3 }.zipWith(Observable.range(0,Integer.MAX_VALUE)){ x, i -> x }.subscribe(received)
+        Observable.from(listOf(1, 2, 3)).takeWhile { x -> x < 3 }.zipWith(Observable.range(0, Integer.MAX_VALUE)) { x, i -> x }.subscribe(received)
         verify(a, times(1)).received(1)
         verify(a, times(1)).received(2)
         verify(a, times(0)).received(3)
@@ -272,7 +273,7 @@ public class BasicKotlinTests : KotlinTests() {
                 .groupBy { s -> s.length() }
                 .flatMap { groupObervable ->
                     groupObervable.map { s ->
-                        "Value: $s Group ${groupObervable.getKey()}"
+                        "Value: $s Group ${groupObervable.key}"
                     }
                 }.toBlocking().forEach { s ->
             println(s)
@@ -283,22 +284,21 @@ public class BasicKotlinTests : KotlinTests() {
     }
 
 
-
     public class TestFactory() {
         var counter = 1
 
         val numbers: Observable<Int>
-            get(){
+            get() {
                 return Observable.from(listOf(1, 3, 2, 5, 4))
             }
 
         val onSubscribe: TestOnSubscribe
-            get(){
+            get() {
                 return TestOnSubscribe(counter++)
             }
 
         val observable: Observable<String>
-            get(){
+            get() {
                 return Observable.create(onSubscribe)
             }
 

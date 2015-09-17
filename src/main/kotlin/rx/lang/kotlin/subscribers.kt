@@ -3,7 +3,7 @@ package rx.lang.kotlin
 import rx.Subscriber
 import rx.exceptions.OnErrorNotImplementedException
 import rx.observers.SerializedSubscriber
-import java.util.ArrayList
+import java.util.*
 
 public class FunctionSubscriber<T>() : Subscriber<T>() {
     private val onCompletedFunctions = ArrayList<() -> Unit>()

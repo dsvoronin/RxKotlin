@@ -2,38 +2,38 @@ package rx.lang.kotlin
 
 import rx.Subscriber
 import rx.exceptions.OnErrorNotImplementedException
-import java.util.ArrayList
+import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.junit.Test as test
 
 public class SubscribersTest {
-    test fun testEmptySubscriber() {
+    @test fun testEmptySubscriber() {
         val s = subscriber<Int>()
         callSubscriberMethods(false, s)
     }
 
-    test fun testSubscriberConstruction() {
+    @test fun testSubscriberConstruction() {
         val events = ArrayList<String>()
 
         callSubscriberMethods(false, subscriber<Int>().
-                onNext {events.add("onNext($it)")}
+                onNext { events.add("onNext($it)") }
         )
 
         assertEquals(listOf("onNext(1)"), events)
         events.clear()
 
         callSubscriberMethods(true, subscriber<Int>().
-                onNext {events.add("onNext($it)")}.
-                onError { events.add(it.javaClass.getSimpleName()) }
+                onNext { events.add("onNext($it)") }.
+                onError { events.add(it.javaClass.simpleName) }
         )
 
         assertEquals(listOf("onNext(1)", "RuntimeException"), events)
         events.clear()
 
         callSubscriberMethods(true, subscriber<Int>().
-                onNext {events.add("onNext($it)")}.
-                onError { events.add(it.javaClass.getSimpleName()) }.
+                onNext { events.add("onNext($it)") }.
+                onError { events.add(it.javaClass.simpleName) }.
                 onCompleted { events.add("onCompleted") }
         )
 
@@ -41,12 +41,12 @@ public class SubscribersTest {
         events.clear()
     }
 
-    test(expected = OnErrorNotImplementedException::class)
+    @test(expected = OnErrorNotImplementedException::class)
     fun testNoErrorHandlers() {
         subscriber<Int>().onError(Exception("expected"))
     }
 
-    test fun testErrorHandlers() {
+    @test fun testErrorHandlers() {
         var errorsCaught = 0
 
         subscriber<Int>().
@@ -57,29 +57,29 @@ public class SubscribersTest {
         assertEquals(2, errorsCaught)
     }
 
-    test fun testMultipleOnNextHandlers() {
+    @test fun testMultipleOnNextHandlers() {
         var nextCaught = 0
 
         subscriber<Int>().
-                onNext { nextCaught ++ }.
-                onNext { nextCaught ++ }.
+                onNext { nextCaught++ }.
+                onNext { nextCaught++ }.
                 onNext(1)
 
         assertEquals(2, nextCaught)
     }
 
-    test fun testOnStart() {
+    @test fun testOnStart() {
         var started = false
         subscriber<Int>().onStart { started = true }.onStart()
         assertTrue(started)
     }
 
-    private fun callSubscriberMethods(hasOnError : Boolean, s: Subscriber<Int>) {
+    private fun callSubscriberMethods(hasOnError: Boolean, s: Subscriber<Int>) {
         s.onStart()
         s.onNext(1)
         try {
             s.onError(RuntimeException())
-        } catch (t : Throwable) {
+        } catch (t: Throwable) {
             if (hasOnError) {
                 throw t
             }
@@ -87,7 +87,7 @@ public class SubscribersTest {
         s.onCompleted()
     }
 
-    test fun testSubscribeWith() {
+    @test fun testSubscribeWith() {
         val completeObservable = observable<Int> {
             it.onNext(1)
             it.onCompleted()
@@ -117,7 +117,7 @@ public class SubscribersTest {
 
         errorObservable.subscribeWith {
             onNext { events.add("onNext($it)") }
-            onError { events.add("onError(${it.javaClass.getSimpleName()})") }
+            onError { events.add("onError(${it.javaClass.simpleName})") }
         }
 
         assertEquals(listOf("onNext(1)", "onError(RuntimeException)"), events)
@@ -128,7 +128,7 @@ public class SubscribersTest {
                 onNext { events.add("onNext($it)") }
             }
         } catch (t: Throwable) {
-            events.add("catch(${t.javaClass.getSimpleName()})")
+            events.add("catch(${t.javaClass.simpleName})")
         }
 
         assertEquals(listOf("onNext(1)", "catch(OnErrorNotImplementedException)"), events)

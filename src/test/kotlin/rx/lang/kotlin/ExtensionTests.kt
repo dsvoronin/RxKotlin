@@ -16,15 +16,17 @@
 
 package rx.lang.kotlin
 
-import rx.Observable
+import org.funktionale.partials.invoke
+import org.junit.Assert.assertEquals
+import org.junit.Assert.fail
 import org.junit.Test
-import org.mockito.Mockito.*
-import org.mockito.Matchers.*
-import org.junit.Assert.*
+import org.mockito.Matchers.any
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import rx.Notification
-import kotlin.concurrent.thread
+import rx.Observable
 import rx.Subscriber
-import org.funktionale.partials.*
+import kotlin.concurrent.thread
 
 /**
  * This class contains tests using the extension functions provided by the language adaptor.
@@ -81,8 +83,8 @@ public class ExtensionTests : KotlinTests() {
     @Test
     public fun testMaterialize() {
         listOf(1, 2, 3).toObservable().materialize().subscribe((received))
-        verify(a, times(4)).received(any(javaClass<Notification<Int>>()))
-        verify(a, times(0)).error(any(javaClass<Exception>()))
+        verify(a, times(4)).received(any(Notification::class.java))
+        verify(a, times(0)).error(any(Exception::class.java))
     }
 
 
@@ -102,13 +104,13 @@ public class ExtensionTests : KotlinTests() {
         verify(a, times(0)).received(5)
         verify(a, times(1)).received(6)
         verify(a, times(0)).received(7)
-        verify(a, times(1)).error(any(javaClass<NullPointerException>()))
+        verify(a, times(1)).error(any(NullPointerException::class.java))
     }
 
     @Test
     public fun testScriptWithMaterialize() {
         TestFactory().observable.materialize().subscribe((received))
-        verify(a, times(2)).received(any(javaClass<Notification<Int>>()))
+        verify(a, times(2)).received(any(Notification::class.java))
     }
 
     @Test
@@ -250,7 +252,6 @@ public class ExtensionTests : KotlinTests() {
             subscriber.onCompleted()
         }
     }
-
 
 
     inner public class TestFactory() {

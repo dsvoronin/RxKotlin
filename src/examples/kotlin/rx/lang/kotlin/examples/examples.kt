@@ -1,13 +1,5 @@
 package rx.lang.kotlin.examples
 
-import rx.Observable
-import kotlin.concurrent.thread
-import java.util.Scanner
-import java.net.URL
-import rx.lang.kotlin.observable
-import rx.lang.kotlin.toObservable
-import rx.lang.kotlin.onError
-
 fun main(args: Array<String>) {
 
     val printArticle = { art: String ->
@@ -37,40 +29,41 @@ private fun URL.toScannerObservable() = observable<String> { s ->
 }
 
 public fun syncObservable(): Observable<String> =
-    observable { subscriber ->
-        (0..75).toObservable()
-                .map { "Sync value_$it" }
-                .subscribe(subscriber)
-    }
+        observable { subscriber ->
+            (0..75).toObservable()
+                    .map { "Sync value_$it" }
+                    .subscribe(subscriber)
+        }
 
 public fun asyncObservable(): Observable<String> =
-    observable { subscriber ->
-        thread {
-            (0..75).toObservable()
-                    .map { "Async value_$it" }
-                    .subscribe(subscriber)
+        observable { subscriber ->
+            thread {
+                (0..75).toObservable()
+                        .map { "Async value_$it" }
+                        .subscribe(subscriber)
+            }
         }
-    }
 
 public fun asyncWiki(vararg articleNames: String): Observable<String> =
-    observable { subscriber ->
-        thread {
-            articleNames.toObservable()
-                    .flatMap { name -> URL("http://en.wikipedia.org/wiki/$name").toScannerObservable().first() }
-                    .subscribe(subscriber)
+        observable { subscriber ->
+            thread {
+                articleNames.toObservable()
+                        .flatMap { name -> URL("http://en.wikipedia.org/wiki/$name").toScannerObservable().first() }
+                        .subscribe(subscriber)
+            }
         }
-    }
 
 public fun asyncWikiWithErrorHandling(vararg articleNames: String): Observable<String> =
-    observable { subscriber ->
-        thread {
-            articleNames.toObservable()
-                    .flatMap { name -> URL("http://en.wikipedia.org/wiki/$name").toScannerObservable().first() }
-                    .onError { e ->
-                        subscriber.onError(e) }
-                    .subscribe(subscriber)
+        observable { subscriber ->
+            thread {
+                articleNames.toObservable()
+                        .flatMap { name -> URL("http://en.wikipedia.org/wiki/$name").toScannerObservable().first() }
+                        .onError { e ->
+                            subscriber.onError(e)
+                        }
+                        .subscribe(subscriber)
+            }
         }
-    }
 
 public fun simpleComposition() {
     asyncObservable().skip(10).take(5)

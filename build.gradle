@@ -7,6 +7,8 @@ buildscript {
 
 apply plugin: 'kotlin'
 
+repositories { jcenter() }
+
 dependencies {
     compile 'io.reactivex:rxjava:1.0.+'
     compile 'org.jetbrains.kotlin:kotlin-stdlib:0.13.+'
