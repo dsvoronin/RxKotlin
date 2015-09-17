@@ -1,27 +1,31 @@
 buildscript {
-    repositories { jcenter() }
-    dependencies {
-        classpath 'com.netflix.nebula:gradle-rxjava-project-plugin:2.2.3',
-                'org.jetbrains.kotlin:kotlin-gradle-plugin:0.12.213'
-    }
+  repositories { jcenter() }
+  dependencies { classpath 'com.netflix.nebula:gradle-rxjava-project-plugin:2.+',
+                           'org.jetbrains.kotlin:kotlin-gradle-plugin:0.12.+' }
 }
 
-//apply plugin: 'rxjava-project'
+apply plugin: 'rxjava-project'
 apply plugin: 'kotlin'
 
-repositories {
-    jcenter()
-}
-
 dependencies {
-    compile 'io.reactivex:rxjava:1.0.11'
-    compile 'org.jetbrains.kotlin:kotlin-stdlib:0.12.213'
+    compile 'io.reactivex:rxjava:1.0.+'
+    compile 'org.jetbrains.kotlin:kotlin-stdlib:0.12.+'
     compile 'org.funktionale:funktionale:0.5.1_M12'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.8.5'
-//    examplesCompile 'com.squareup.retrofit:retrofit:1.9.+'
+    examplesCompile 'com.squareup.retrofit:retrofit:1.9.+'
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.4'
+    gradleVersion = '2.2.1'
+}
+
+// support for snapshot/final releases with the various branches RxJava uses
+nebulaRelease {
+    addReleaseBranchPattern(/\d+\.\d+\.\d+/)
+    addReleaseBranchPattern('HEAD')
+}
+
+if (project.hasProperty('release.useLastTag')) {
+    tasks.prepare.enabled = false
 }

@@ -199,7 +199,7 @@ public class ExtensionTests : KotlinTests() {
         verify(a, times(1)).received(3)
     }
 
-    @Test(expected = javaClass<RuntimeException>())
+    @Test(expected = RuntimeException::class)
     public fun testForEachWithError() {
         observable(asyncObservable).toBlocking().forEach { throw RuntimeException("err") }
         fail("we expect an exception to be thrown")

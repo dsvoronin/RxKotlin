@@ -208,7 +208,7 @@ public class BasicKotlinTests : KotlinTests() {
         verify(a, times(1)).received(3)
     }
 
-    @Test(expected = javaClass<RuntimeException>())
+    @Test(expected = RuntimeException::class)
     public fun testForEachWithError() {
         Observable.create(AsyncObservable()).toBlocking().forEach { throw RuntimeException("err") }
         fail("we expect an exception to be thrown")
@@ -220,7 +220,7 @@ public class BasicKotlinTests : KotlinTests() {
         assertEquals("default", Observable.from(listOf("one", "two")).toBlocking().lastOrDefault("default") { x -> x.length() > 3 })
     }
 
-    @Test(expected = javaClass<IllegalArgumentException>())
+    @Test(expected = IllegalArgumentException::class)
     public fun testSingle() {
         assertEquals("one", Observable.just("one").toBlocking().single { x -> x.length() == 3 })
         Observable.from(listOf("one", "two")).toBlocking().single { x -> x.length() == 3 }
